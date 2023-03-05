@@ -2,32 +2,19 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState } from "react";
 import { Container, Row, Col, Card, Form } from "react-bootstrap";
 import "./App.css";
+import { AiOutlineDelete } from "react-icons/ai";
+import { GrAddCircle } from "react-icons/gr";
 import { Inote } from "./models";
 
 const initialState = [
   {
     id: "0",
-    title: "Get requirements",
+    title: "Title",
     description: "Lorem ipsum dolor sit amet consectetur adipisicing elit",
   },
   {
     id: "1",
     title: "Design Layout",
-    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit",
-  },
-  {
-    id: "2",
-    title: "Design DB Schema",
-    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit",
-  },
-  {
-    id: "3",
-    title: "Develop Server",
-    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit",
-  },
-  {
-    id: "4",
-    title: "Deply App",
     description: "Lorem ipsum dolor sit amet consectetur adipisicing elit",
   },
 ];
@@ -78,7 +65,7 @@ function App() {
       setDone(done.filter((e) => e.id !== idNote));
     }
 
-    // Process to add note in Destination Column
+    // Process to add note in Target Column
     if (newColumn.id === "notes") {
       setNotes(notes.concat([newCard]));
     } else if (newColumn.id === "processing") {
@@ -94,6 +81,7 @@ function App() {
     e.preventDefault();
   };
 
+  // Function to create the new Note from the form
   const createNote = () => {
     if (!form.title || !form.description) return;
 
@@ -108,11 +96,56 @@ function App() {
     setDataBase(dataBase.concat([newCard]));
     setNotes(notes.concat([newCard]));
   };
+
+  // Function to Delete Notes
+  const deleteNote = (idCol: string, noteId: string) => {
+    if (idCol === "notes") {
+      setNotes(notes.filter((e) => e.id !== noteId));
+    } else if (idCol === "processing") {
+      setProcessing(processing.filter((e) => e.id !== noteId));
+    } else if (idCol === "approved") {
+      setApproved(approved.filter((e) => e.id !== noteId));
+    } else if (idCol === "done") {
+      setDone(done.filter((e) => e.id !== noteId));
+    }
+  };
+
+  // Function to create the cards according to the info received
+  const renderColumns = (idCol: string, title: string, state: Inote[]) => {
+    return (
+      <Col
+        id={idCol}
+        md="3"
+        onDragOver={(e) => handleOnDragOver(e)}
+        onDrop={(e) => handleOnDrop(e)}
+      >
+        <h5>{title}</h5>
+        {state.map((note: Inote) => {
+          return (
+            <Card
+              key={note.id}
+              id={note.id}
+              className="my-5 mx-4"
+              draggable
+              onDragStart={(e) => handleOnDrag(e)}
+            >
+              <Card.Header className="d-flex p-2  justify-content-between align-items-baseline">
+                <p>{note.title}</p>
+                <AiOutlineDelete display={ idCol==='done'?'none':'show'} onClick={() => deleteNote(idCol, note.id)} />
+              </Card.Header>
+              <Card.Body className="">{note.description}</Card.Body>
+            </Card>
+          );
+        })}
+      </Col>
+    );
+  };
+
   return (
     <div className="App">
       <Container className="my-5 centerItems flex-column">
         <Form className="centerItems">
-          <div className="field-form w-50">
+          <div className="field-form title">
             <input
               required
               type="text"
@@ -122,7 +155,7 @@ function App() {
               onChange={(e) => setForm({ ...form, title: e.target.value })}
             />
           </div>
-          <div className="field-form ms-5 w-75">
+          <div className="field-form ms-5 description">
             <input
               required
               type="text"
@@ -137,102 +170,18 @@ function App() {
           <div className="field-form ms-5">
             <button
               type="button"
-              className="btn btn-primary"
+              className="btn btn-primary d-flex justify-content-around align-items-center"
               onClick={createNote}
             >
-              Add
+              Add <GrAddCircle />
             </button>
           </div>
         </Form>
         <Row className="table">
-          <Col
-            id="notes"
-            md="3"
-            onDragOver={(e) => handleOnDragOver(e)}
-            onDrop={(e) => handleOnDrop(e)}
-          >
-            <h5>Notes</h5>
-            {notes.map((note: Inote) => {
-              return (
-                <Card
-                  key={note.id}
-                  id={note.id}
-                  className="my-5 mx-4"
-                  draggable
-                  onDragStart={(e) => handleOnDrag(e)}
-                >
-                  <Card.Header>{note.title}</Card.Header>
-                  <Card.Body>{note.description}</Card.Body>
-                </Card>
-              );
-            })}
-          </Col>
-          <Col
-            id="processing"
-            md="3"
-            onDragOver={(e) => handleOnDragOver(e)}
-            onDrop={(e) => handleOnDrop(e)}
-          >
-            <h5>Processing</h5>
-            {processing.map((note: Inote) => {
-              return (
-                <Card
-                  key={note.id}
-                  id={note.id}
-                  className="my-5 mx-4"
-                  draggable
-                  onDragStart={(e) => handleOnDrag(e)}
-                >
-                  <Card.Header>{note.title}</Card.Header>
-                  <Card.Body>{note.description}</Card.Body>
-                </Card>
-              );
-            })}
-          </Col>
-          <Col
-            id="approved"
-            md="3"
-            onDragOver={(e) => handleOnDragOver(e)}
-            onDrop={(e) => handleOnDrop(e)}
-          >
-            <h5>Approved</h5>
-            {approved.map((note: Inote) => {
-              return (
-                <Card
-                  key={note.id}
-                  id={note.id}
-                  className="my-5 mx-4"
-                  draggable
-                  onDragStart={(e) => handleOnDrag(e)}
-                >
-                  <Card.Header>{note.title}</Card.Header>
-                  <Card.Body>{note.description}</Card.Body>
-                </Card>
-              );
-            })}
-          </Col>
-          <Col
-            id="done"
-            md="3"
-            onDragOver={(e) => handleOnDragOver(e)}
-            onDrop={(e) => handleOnDrop(e)}
-          >
-            <h5>Done</h5>
-            {done.map((note: Inote) => {
-              return (
-                <Card
-                  key={note.id}
-                  id={note.id}
-                  className="my-5 mx-4"
-                  draggable
-                  onDragStart={(e) => handleOnDrag(e)}
-                >
-                  <Card.Header>{note.title}</Card.Header>
-                  <Card.Body>{note.description}</Card.Body>
-                </Card>
-              );
-            })}
-          </Col>
+          {renderColumns("notes", "Notes", notes)}
+          {renderColumns("processing", "Processing", processing)}
+          {renderColumns("approved", "Approved", approved)}
+          {renderColumns("done", "Done", done)}
         </Row>
       </Container>
     </div>

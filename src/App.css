@@ -1,7 +1,8 @@
 .centerItems {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: baseline;
+  width: 100%;
 }
 
 .container > .table {
@@ -21,14 +22,30 @@
 }
 
 button {
-  width: 120px;
+  width: 100px;
   background-color: #ffe000 !important;
   border: none !important;
   color: black !important;
 }
 
-button:hover {
-  background-color: #aca35f !important;
+form .title {
+  width: 40%;
+}
+form .description {
+  width: 50%;
+}
+
+/* -------Form style -------------- */
+.form-control {
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid #0000005c;
+}
+.form-control:focus {
+  box-shadow: rgb(0 30 15 / 34%) 0px 19px 14px -15px,
+    rgb(9 30 66 / 0%) 6px -2px 0px 0px;
+  border-color: #3333;
 }
 
 /*--------------- style for card ------------*/
@@ -38,17 +55,47 @@ button:hover {
     rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
   background-color: #ffe000;
   border: none;
+  cursor: grab;
+}
+
+.card-header p {
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 0;
+  margin: 0;
+}
+
+.card-header svg {
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.card-header svg:hover {
+  animation: tilt-shaking 0.25s infinite;
 }
 .card:hover {
   box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
   transition: box-shadow 0.2s ease-in-out;
 }
-#processing .card .card-header::after {
-  content: " - ⏲️";
+
+#done .card-header::after {
+  content: "✅";
 }
-#approved .card .card-header::after {
-  content: " - 👍";
-}
-#done .card .card-header::after {
-  content: " - ✅";
+
+@keyframes tilt-shaking {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(5deg);
+  }
+  50% {
+    transform: rotate(0eg);
+  }
+  75% {
+    transform: rotate(-5deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
 }
